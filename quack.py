@@ -71,7 +71,7 @@ async def help(ctx):
     memes.add_field(name="winnie", value="⤥ use winnie cultured meme", inline=True)
     memes.add_field(name="sadcat", value="⤥ use sadcat meme", inline=True)
     memes.add_field(name="masteroogway", value="⤥ use master oogway meme", inline=True)
-    memes.set_footer(text="use /help cmd to see more details")
+    memes.set_footer(text="check the github repo out!")
     utility = discord.Embed(
         title="Utlity/Miscellaneous",
         url="https://github.com/Kratospidey/DUCK",
@@ -117,7 +117,7 @@ async def help(ctx):
     )
     utility.add_field(name="mock", value="⤥ mock someone", inline=False)
     utility.add_field(name="8ball", value="⤥ ask 8ball something", inline=False)
-    utility.set_footer(text="use /help cmd to see more details")
+    utility.set_footer(text="check the github repo out!")
 
     animals = discord.Embed(
         title="Animals",
@@ -163,7 +163,7 @@ async def help(ctx):
     animals.add_field(
         name="horses", value="⤥ get cute horses pics and videos", inline=False
     )
-    animals.set_footer(text="use /help cmd to see more details")
+    animals.set_footer(text="check the github repo out!")
     music = discord.Embed(
         title="Music",
         url="https://github.com/Kratospidey/DUCK",
@@ -197,7 +197,7 @@ async def help(ctx):
         value="⤥ stops music and disconnects from the voice chat",
         inline=False,
     )
-    music.set_footer(text="use /help cmd to see more details")
+    music.set_footer(text="check the github repo out!")
     embarass = discord.Embed(
         title="Embarass",
         url="https://github.com/Kratospidey/DUCK",
@@ -218,7 +218,7 @@ async def help(ctx):
     embarass.add_field(
         name="Show", value="⤥ Shows all the users in the bot's database", inline=False
     )
-    embarass.set_footer(text="use /help cmd to see more details")
+    embarass.set_footer(text="check the github repo out!")
     select = Select(
         placeholder="Select a category",
         options=[
