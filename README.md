@@ -103,7 +103,7 @@ To run this project, you will need to add the following environment variables to
 * first create an application on [Discord Developer portal](https://discord.com/developers/applications)
 * then create a bot and customise it however you like
 * make sure to copy the token of your bot as you'll need it later
-* To install DUCK just do`git clone https://github.com/Kratospidey/DUCK`
+* To install DUCK just do `git clone https://github.com/Kratospidey/DUCK`
 * then do `cd DUCK`
 * now assign the token you copied to `TOKEN` in the .env file
 * now go to [Sauce Nao](https://saucenao.com/) and get an API key
