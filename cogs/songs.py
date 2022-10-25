@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import random
 import asyncio
 import itertools
 import sys
@@ -48,6 +49,9 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.web_url = data.get("webpage_url")
         self.duration = data.get("duration")
 
+        # YTDL info dicts (data) have other useful information you might want
+        # https://github.com/rg3/youtube-dl/blob/master/README.md
+
     def __getitem__(self, item: str):
         """Allows us to access attributes similar to a dict.
         This is only useful when you are NOT downloading.
@@ -70,7 +74,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
             description=f"Queued [{data['title']}]({data['webpage_url']}) [{ctx.author.mention}]",
             color=discord.Color.green(),
         )
-        await ctx.respond(embed=embed)
+        await ctx.send(embed=embed)
 
         if download:
             source = ytdl.prepare_filename(data)
@@ -152,7 +156,7 @@ class MusicPlayer:
                         source, loop=self.bot.loop
                     )
                 except Exception as e:
-                    await self._channel.respond(
+                    await self._channel.send(
                         f"There was an error processing your song.\n"
                         f"```css\n[{e}]\n```"
                     )
@@ -259,7 +263,7 @@ class Music(commands.Cog):
                     description="No channel to join. Please call `,join` from a voice channel.",
                     color=discord.Color.green(),
                 )
-                await ctx.respond(embed=embed)
+                await ctx.send(embed=embed)
                 raise InvalidVoiceChannel(
                     "No channel to join. Please either specify a valid channel or join one."
                 )
@@ -301,8 +305,6 @@ class Music(commands.Cog):
         if not vc:
             await ctx.invoke(self.connect_)
 
-        await ctx.respond("Playing!")
-
         player = self.get_player(ctx)
 
         # If download is False, source will be a dict which will be used later to regather the stream.
@@ -324,9 +326,10 @@ class Music(commands.Cog):
                 description="I am currently not playing anything",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
         elif vc.is_paused():
             return
+
         vc.pause()
         await ctx.respond("Paused ⏸️")
 
@@ -341,7 +344,7 @@ class Music(commands.Cog):
                 description="I'm not connected to a voice channel",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
         elif not vc.is_paused():
             return
 
@@ -359,7 +362,7 @@ class Music(commands.Cog):
                 description="I'm not connected to a voice channel",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         if vc.is_paused():
             pass
@@ -384,7 +387,7 @@ class Music(commands.Cog):
                 description="I'm not connected to a voice channel",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         player = self.get_player(ctx)
         if pos == None:
@@ -398,14 +401,14 @@ class Music(commands.Cog):
                     description=f"Removed [{s['title']}]({s['webpage_url']}) [{s['requester'].mention}]",
                     color=discord.Color.green(),
                 )
-                await ctx.respond(embed=embed)
+                await ctx.send(embed=embed)
             except:
                 embed = discord.Embed(
                     title="",
                     description=f'Could not find a track for "{pos}"',
                     color=discord.Color.green(),
                 )
-                await ctx.respond(embed=embed)
+                await ctx.send(embed=embed)
 
     @discord.slash_command(
         name="clear", aliases=["clr", "cl", "cr"], description="clears entire queue"
@@ -421,7 +424,7 @@ class Music(commands.Cog):
                 description="I'm not connected to a voice channel",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         player = self.get_player(ctx)
         player.queue._queue.clear()
@@ -433,7 +436,6 @@ class Music(commands.Cog):
     async def queue_info(self, ctx):
         """Retrieve a basic queue of upcoming songs."""
         vc = ctx.voice_client
-        await ctx.respond(" Queue!")
 
         if not vc or not vc.is_connected():
             embed = discord.Embed(
@@ -441,14 +443,14 @@ class Music(commands.Cog):
                 description="I'm not connected to a voice channel",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         player = self.get_player(ctx)
         if player.queue.empty():
             embed = discord.Embed(
                 title="", description="queue is empty", color=discord.Color.green()
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         seconds = vc.source.duration % (24 * 3600)
         hour = seconds // 3600
@@ -479,20 +481,19 @@ class Music(commands.Cog):
             color=discord.Color.green(),
         )
         embed.set_footer(
-            text=f"{ctx.author.display_name}", icon_url=str(ctx.author.avatar)
+            text=f"{ctx.author.display_name}", icon_url=ctx.author.avatar_url
         )
 
         await ctx.send(embed=embed)
 
     @discord.slash_command(
-        name="playing",
+        name="np",
         aliases=["song", "current", "currentsong", "playing"],
         description="shows the current playing song",
     )
     async def now_playing_(self, ctx):
         """Display information about the currently playing song."""
         vc = ctx.voice_client
-        await ctx.respond("Playing!")
 
         if not vc or not vc.is_connected():
             embed = discord.Embed(
@@ -500,7 +501,7 @@ class Music(commands.Cog):
                 description="I'm not connected to a voice channel",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         player = self.get_player(ctx)
         if not player.current:
@@ -509,7 +510,7 @@ class Music(commands.Cog):
                 description="I am currently not playing anything",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         seconds = vc.source.duration % (24 * 3600)
         hour = seconds // 3600
@@ -526,11 +527,11 @@ class Music(commands.Cog):
             description=f"[{vc.source.title}]({vc.source.web_url}) [{vc.source.requester.mention}] | `{duration}`",
             color=discord.Color.green(),
         )
-        embed.set_author(icon_url=str(self.bot.user.avatar), name=f"Now Playing 🎶")
+        embed.set_author(icon_url=self.bot.user.avatar_url, name=f"Now Playing 🎶")
         await ctx.send(embed=embed)
 
     @discord.slash_command(
-        name="volume", aliases=["vol", "v"], description="changes Duck's volume"
+        name="volume", aliases=["vol", "v"], description="changes Kermit's volume"
     )
     async def change_volume(self, ctx, *, vol: float = None):
         """Change the player volume.
@@ -547,7 +548,7 @@ class Music(commands.Cog):
                 description="I am not currently connected to voice",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         if not vol:
             embed = discord.Embed(
@@ -555,7 +556,7 @@ class Music(commands.Cog):
                 description=f"🔊 **{(vc.source.volume)*100}%**",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         if not 0 < vol < 101:
             embed = discord.Embed(
@@ -563,7 +564,7 @@ class Music(commands.Cog):
                 description="Please enter a value between 1 and 100",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         player = self.get_player(ctx)
 
@@ -576,7 +577,7 @@ class Music(commands.Cog):
             description=f"**`{ctx.author}`** set the volume to **{vol}%**",
             color=discord.Color.green(),
         )
-        await ctx.respond(embed=embed)
+        await ctx.send(embed=embed)
 
     @discord.slash_command(
         name="leave",
@@ -596,7 +597,7 @@ class Music(commands.Cog):
                 description="I'm not connected to a voice channel",
                 color=discord.Color.green(),
             )
-            return await ctx.respond(embed=embed)
+            return await ctx.send(embed=embed)
 
         await ctx.respond("**Successfully disconnected**")
 
