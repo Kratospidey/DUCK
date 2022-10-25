@@ -47,6 +47,7 @@ Py3+ (Python Version)
 * pickleDB
 * python-dotenv
 * pysaucenao
+* pynacl
 * run this command if it's showing `discord couldn't be imported` error, `python -m pip install --upgrade --no-deps --force-reinstall git+https://github.com/Pycord-Development/pycord`
 
 ## Features
@@ -121,7 +122,7 @@ all the functions will come up
 To run the bot locally
 
 ```bash
-  python lad.py
+  python quack.py
 ```
 
 ## Deployment
